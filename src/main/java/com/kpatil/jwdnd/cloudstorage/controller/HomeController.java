@@ -30,9 +30,14 @@ public class HomeController {
         logger.info("Received request for home page ..");
         String userName = auth.getName();
         logger.info("Logged in user -> " + userName);
-        User user = userService.getUser(userName);
-        model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
-        model.addAttribute("files", fileService.getAllFiles(user.getUserId()));
+        try {
+            User user = userService.getUser(userName);
+            model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
+            model.addAttribute("files", fileService.getAllFiles(user.getUserId()));
+        } catch (Exception e) {
+            logger.info("User session error: " + e.getMessage());
+            return "redirect:/login";
+        }
         return "home";
     }
 }

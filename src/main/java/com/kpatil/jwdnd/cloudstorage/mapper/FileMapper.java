@@ -13,8 +13,11 @@ public interface FileMapper {
     Integer save(FileDAO fileDAO);
 
     @Select("SELECT * FROM files WHERE userid = #{userId}")
-    List<FileDAO> findFilesByUserId(@Param("userId") Integer userId);
+    List<FileDAO> findFilesByUserId(Integer userId);
 
     @Select("SELECT * FROM files WHERE fileId = #{fileId}")
-    FileDAO findFileById(Integer fileId);
+    FileDAO findByFileId(Integer fileId);
+
+    @Delete("DELETE FROM files WHERE fileId = #{fileId}")
+    void deleteByFileId(Integer fileId);
 }

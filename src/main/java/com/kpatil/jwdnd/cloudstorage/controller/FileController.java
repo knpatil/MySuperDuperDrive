@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/file")
@@ -33,17 +34,16 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("fileUpload") MultipartFile file, Authentication auth, Model model) {
+    public String uploadFile(@RequestParam("fileUpload") MultipartFile file, Authentication auth, Model model) throws IOException {
         logger.info("Received request to upload a file " + file.getOriginalFilename());
         logger.info("Checking user ");
         User user = this.userService.getUser(auth.getName());
         logger.info("This user is " + user.getUsername());
-        try {
+        if (file.getOriginalFilename() != null && !Objects.equals(file.getOriginalFilename(), "")) {
             FileDAO fileDAO = this.fileService.uploadFile(file, user.getUserId());
             logger.info("File uploaded successfully with ID = " + fileDAO.getFileId());
-        } catch (IOException e) {
-            logger.warn("File upload failed!");
-            logger.warn("Stack Trace: " + Arrays.toString(e.getStackTrace()));
+        } else {
+            model.addAttribute("message", "No file to upload!");
         }
         model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
         model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
@@ -51,16 +51,29 @@ public class FileController {
     }
 
     @GetMapping("/view/{fileId}")
-    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Integer fileId, Authentication auth, Model model) {
-
+    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Integer fileId) {
+        logger.info("Received request to download file with id = " + fileId);
         FileDAO fileDAO = this.fileService.getFileById(fileId);
         String contentType = fileDAO.getContentType();
         String fileName = fileDAO.getFilename();
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"" + fileName + "\"")
                 .body(fileDAO.getFileData());
+    }
+
+    @GetMapping("/delete/{fileId}")
+    public String deleteFile(@PathVariable("fileId") Integer fileId, Authentication auth, Model model) {
+        User user = userService.getUser(auth.getName());
+        logger.info("Received request to delete file with id = " + fileId);
+        try {
+            this.fileService.deleteFile(fileId);
+        } catch (Exception e) {
+            logger.warn("Error occurred while deleting file: " + Arrays.toString(e.getStackTrace()));
+        }
+        model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
+        model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
+        return "home";
     }
 
 }
