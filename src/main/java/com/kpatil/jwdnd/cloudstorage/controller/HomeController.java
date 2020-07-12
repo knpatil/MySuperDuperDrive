@@ -2,6 +2,7 @@ package com.kpatil.jwdnd.cloudstorage.controller;
 
 import com.kpatil.jwdnd.cloudstorage.model.User;
 import com.kpatil.jwdnd.cloudstorage.services.FileService;
+import com.kpatil.jwdnd.cloudstorage.services.NoteService;
 import com.kpatil.jwdnd.cloudstorage.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,12 @@ public class HomeController {
 
     private FileService fileService;
     private UserService userService;
+    private NoteService noteService;
 
-    public HomeController(FileService fileService, UserService userService) {
+    public HomeController(FileService fileService, UserService userService, NoteService noteService) {
         this.fileService = fileService;
         this.userService = userService;
+        this.noteService = noteService;
     }
 
     @GetMapping
@@ -34,6 +37,8 @@ public class HomeController {
             User user = userService.getUser(userName);
             model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
             model.addAttribute("files", fileService.getAllFiles(user.getUserId()));
+            model.addAttribute("notes", noteService.getAllNotes(user.getUserId()));
+            model.addAttribute("activeTab", "#nav-files");
         } catch (Exception e) {
             logger.info("User session error: " + e.getMessage());
             return "redirect:/login";

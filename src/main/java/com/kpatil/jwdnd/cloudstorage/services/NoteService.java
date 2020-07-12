@@ -36,4 +36,9 @@ public class NoteService {
         logger.info("Fetching all notes for user " + userId);
         return this.noteMapper.findAllByUserId(userId);
     }
+
+    public void deleteNote(Integer noteId) {
+        logger.info("Deleting note " + noteId);
+        this.noteMapper.deleteByNoteId(noteId);
+    }
 }

@@ -3,6 +3,7 @@ package com.kpatil.jwdnd.cloudstorage.controller;
 import com.kpatil.jwdnd.cloudstorage.model.FileDAO;
 import com.kpatil.jwdnd.cloudstorage.model.User;
 import com.kpatil.jwdnd.cloudstorage.services.FileService;
+import com.kpatil.jwdnd.cloudstorage.services.NoteService;
 import com.kpatil.jwdnd.cloudstorage.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,12 @@ public class FileController {
 
     private FileService fileService;
     private UserService userService;
+    private NoteService noteService;
 
-    public FileController(FileService fileService, UserService userService) {
+    public FileController(FileService fileService, UserService userService, NoteService noteService) {
         this.fileService = fileService;
         this.userService = userService;
+        this.noteService = noteService;
     }
 
     @PostMapping("/upload")
@@ -43,10 +46,12 @@ public class FileController {
             FileDAO fileDAO = this.fileService.uploadFile(file, user.getUserId());
             logger.info("File uploaded successfully with ID = " + fileDAO.getFileId());
         } else {
-            model.addAttribute("message", "No file to upload!");
+            model.addAttribute("message", "No file selected to upload!");
         }
         model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
         model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
+        model.addAttribute("notes", this.noteService.getAllNotes(user.getUserId()));
+        model.addAttribute("activeTab", "#nav-files");
         return "home";
     }
 
@@ -70,9 +75,12 @@ public class FileController {
             this.fileService.deleteFile(fileId);
         } catch (Exception e) {
             logger.warn("Error occurred while deleting file: " + Arrays.toString(e.getStackTrace()));
+            model.addAttribute("message", e.getMessage());
         }
         model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
         model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
+        model.addAttribute("notes", this.noteService.getAllNotes(user.getUserId()));
+        model.addAttribute("activeTab", "#nav-files");
         return "home";
     }
 

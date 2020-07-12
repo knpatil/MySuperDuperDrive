@@ -209,6 +209,8 @@
             </div>
         </div>
 
+        <input id="activeTab" type="hidden" th:value="${activeTab}" />
+
         <script th:src="@{/js/jquery-slim.min.js}"></script>
         <script th:src="@{/js/popper.min.js}"></script>
         <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -231,6 +233,13 @@
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
             }
+
+            // A $( document ).ready() block.
+            $( document ).ready(function() {
+                console.log( "I am ready now!" );
+                var activeTab = $('#activeTab').val();
+                $('.nav-tabs a[href="' + activeTab + '"]').tab('show')
+            });
         </script>
     </body>
 </html>
