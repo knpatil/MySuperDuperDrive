@@ -1,0 +1,75 @@
+package com.kpatil.jwdnd.cloudstorage.model;
+
+public class FileDAO {
+    private Integer fileId;
+    private String filename;
+    private String contentType;
+    private long fileSize;
+    private Integer userId;
+    private byte[] fileData;
+
+    public FileDAO(Integer fileId, String filename, String contentType, long fileSize, Integer userId, byte[] fileData) {
+        this.fileId = fileId;
+        this.filename = filename;
+        this.contentType = contentType;
+        this.fileSize = fileSize;
+        this.userId = userId;
+        this.fileData = fileData;
+    }
+
+    public FileDAO(String filename, String contentType, long fileSize, Integer userId, byte[] fileData) {
+        this.filename = filename;
+        this.contentType = contentType;
+        this.fileSize = fileSize;
+        this.userId = userId;
+        this.fileData = fileData;
+    }
+
+    public Integer getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Integer fileId) {
+        this.fileId = fileId;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public byte[] getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
+    }
+}
