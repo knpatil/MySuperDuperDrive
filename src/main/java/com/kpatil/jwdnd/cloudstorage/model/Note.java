@@ -3,13 +3,13 @@ package com.kpatil.jwdnd.cloudstorage.model;
 public class Note {
     private Integer noteId;
     private String noteTitle;
-    private String nodeDescription;
+    private String noteDescription;
     private Integer userId;
 
-    public Note(Integer noteId, String noteTitle, String nodeDescription, Integer userId) {
+    public Note(Integer noteId, String noteTitle, String noteDescription, Integer userId) {
         this.noteId = noteId;
         this.noteTitle = noteTitle;
-        this.nodeDescription = nodeDescription;
+        this.noteDescription = noteDescription;
         this.userId = userId;
     }
 
@@ -29,12 +29,12 @@ public class Note {
         this.noteTitle = noteTitle;
     }
 
-    public String getNodeDescription() {
-        return nodeDescription;
+    public String getNoteDescription() {
+        return noteDescription;
     }
 
-    public void setNodeDescription(String nodeDescription) {
-        this.nodeDescription = nodeDescription;
+    public void setNoteDescription(String noteDescription) {
+        this.noteDescription = noteDescription;
     }
 
     public Integer getUserId() {
