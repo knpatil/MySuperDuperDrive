@@ -6,12 +6,13 @@ import com.kpatil.jwdnd.cloudstorage.services.FileService;
 import com.kpatil.jwdnd.cloudstorage.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,18 +36,31 @@ public class FileController {
     public String uploadFile(@RequestParam("fileUpload") MultipartFile file, Authentication auth, Model model) {
         logger.info("Received request to upload a file " + file.getOriginalFilename());
         logger.info("Checking user ");
-        User user = userService.getUser(auth.getName());
+        User user = this.userService.getUser(auth.getName());
         logger.info("This user is " + user.getUsername());
         try {
-            FileDAO fileDAO = fileService.uploadFile(file, user.getUserId());
+            FileDAO fileDAO = this.fileService.uploadFile(file, user.getUserId());
             logger.info("File uploaded successfully with ID = " + fileDAO.getFileId());
         } catch (IOException e) {
             logger.warn("File upload failed!");
             logger.warn("Stack Trace: " + Arrays.toString(e.getStackTrace()));
         }
         model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
-        model.addAttribute("files", fileService.getAllFiles(user.getUserId()));
+        model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
         return "home";
+    }
+
+    @GetMapping("/view/{fileId}")
+    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Integer fileId, Authentication auth, Model model) {
+
+        FileDAO fileDAO = this.fileService.getFileById(fileId);
+        String contentType = fileDAO.getContentType();
+        String fileName = fileDAO.getFilename();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"" + fileName + "\"")
+                .body(fileDAO.getFileData());
     }
 
 }

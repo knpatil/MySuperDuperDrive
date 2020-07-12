@@ -14,4 +14,7 @@ public interface FileMapper {
 
     @Select("SELECT * FROM files WHERE userid = #{userId}")
     List<FileDAO> findFilesByUserId(@Param("userId") Integer userId);
+
+    @Select("SELECT * FROM files WHERE fileId = #{fileId}")
+    FileDAO findFileById(Integer fileId);
 }

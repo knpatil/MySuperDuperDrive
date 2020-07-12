@@ -38,4 +38,8 @@ public class FileService {
     public List<FileDAO> getAllFiles(Integer userId) {
         return fileMapper.findFilesByUserId(userId);
     }
+
+    public FileDAO getFileById(Integer fileId) {
+        return fileMapper.findFileById(fileId);
+    }
 }
