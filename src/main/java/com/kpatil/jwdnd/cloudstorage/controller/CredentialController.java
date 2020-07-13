@@ -1,6 +1,6 @@
 package com.kpatil.jwdnd.cloudstorage.controller;
 
-import com.kpatil.jwdnd.cloudstorage.model.Note;
+import com.kpatil.jwdnd.cloudstorage.model.Credential;
 import com.kpatil.jwdnd.cloudstorage.model.User;
 import com.kpatil.jwdnd.cloudstorage.services.CredentialService;
 import com.kpatil.jwdnd.cloudstorage.services.FileService;
@@ -17,45 +17,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/note")
-public class NoteController {
+@RequestMapping("/credential")
+public class CredentialController {
 
-    private static final Logger logger = LoggerFactory.getLogger(NoteController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CredentialController.class);
 
+    private final CredentialService credentialService;
     private final NoteService noteService;
     private final FileService fileService;
-    private final CredentialService credentialService;
     private final UserService userService;
 
-    public NoteController(NoteService noteService, FileService fileService, CredentialService credentialService, UserService userService) {
+    public CredentialController(CredentialService credentialService, NoteService noteService, FileService fileService, UserService userService) {
+        this.credentialService = credentialService;
         this.noteService = noteService;
         this.fileService = fileService;
-        this.credentialService = credentialService;
         this.userService = userService;
     }
 
     @PostMapping
-    public String createOrUpdateNote(Note note, Authentication auth, Model model) {
-        logger.info("Received request to create or update note ...");
+    public String createOrUpdateCredential(Credential credential, Authentication auth, Model model) {
+        logger.info("Received request to create or update credential ...");
         User user = this.userService.getUser(auth.getName());
-        if (note.getNoteId() > 0) {
-            this.noteService.updateNote(note);
+        if (credential.getCredentialId() > 0) {
+            this.credentialService.updateCredential(credential);
         } else {
-            Note newNote = this.noteService.addNote(note, user.getUserId());
-            logger.info("Note created with id = " + newNote.getNoteId());
+            Credential newCredential = this.credentialService.addCredential(credential, user.getUserId());
+            logger.info("Credential created with id = " + newCredential.getCredentialId());
         }
         addModelAttributes(model, user);
         return "/home";
     }
 
-    @GetMapping("/delete/{noteId}")
-    public String deleteNote(@PathVariable("noteId") Integer noteId, Authentication auth, Model model) {
-        logger.info("Received request to delete note with ID = " + noteId);
+    @GetMapping("/delete/{credentialId}")
+    public String deleteCredential(@PathVariable("credentialId") Integer credentialId, Authentication auth, Model model) {
+        logger.info("Received request to delete credential with ID = " + credentialId);
         User user = this.userService.getUser(auth.getName());
         try {
-            this.noteService.deleteNote(noteId);
+            this.credentialService.deleteCredential(credentialId);
         } catch (Exception e) {
-            logger.info("Exception occurred while deleting note " + e.getMessage());
+            logger.info("Exception occurred while deleting credential " + e.getMessage());
             model.addAttribute("message", e.getMessage());
         }
         addModelAttributes(model, user);
@@ -64,10 +64,10 @@ public class NoteController {
 
     private void addModelAttributes(Model model, User user) {
         model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
+        model.addAttribute("credentials", this.credentialService.getAllCredentials(user.getUserId()));
         model.addAttribute("notes", this.noteService.getAllNotes(user.getUserId()));
         model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
-        model.addAttribute("credentials", this.credentialService.getAllCredentials(user.getUserId()));
-        model.addAttribute("activeTab", "#nav-notes");
+        model.addAttribute("activeTab", "#nav-credentials");
     }
 
 }

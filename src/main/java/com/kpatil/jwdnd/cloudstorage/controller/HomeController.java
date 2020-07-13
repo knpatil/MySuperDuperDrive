@@ -1,6 +1,7 @@
 package com.kpatil.jwdnd.cloudstorage.controller;
 
 import com.kpatil.jwdnd.cloudstorage.model.User;
+import com.kpatil.jwdnd.cloudstorage.services.CredentialService;
 import com.kpatil.jwdnd.cloudstorage.services.FileService;
 import com.kpatil.jwdnd.cloudstorage.services.NoteService;
 import com.kpatil.jwdnd.cloudstorage.services.UserService;
@@ -18,14 +19,16 @@ public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-    private FileService fileService;
-    private UserService userService;
-    private NoteService noteService;
+    private final FileService fileService;
+    private final NoteService noteService;
+    private final CredentialService credentialService;
+    private final UserService userService;
 
-    public HomeController(FileService fileService, UserService userService, NoteService noteService) {
+    public HomeController(FileService fileService, NoteService noteService, CredentialService credentialService, UserService userService) {
         this.fileService = fileService;
-        this.userService = userService;
         this.noteService = noteService;
+        this.credentialService = credentialService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -36,8 +39,9 @@ public class HomeController {
         try {
             User user = userService.getUser(userName);
             model.addAttribute("welcomeText", "Welcome " + user.getFirstName());
-            model.addAttribute("files", fileService.getAllFiles(user.getUserId()));
-            model.addAttribute("notes", noteService.getAllNotes(user.getUserId()));
+            model.addAttribute("files", this.fileService.getAllFiles(user.getUserId()));
+            model.addAttribute("notes", this.noteService.getAllNotes(user.getUserId()));
+            model.addAttribute("credentials", this.credentialService.getAllCredentials(user.getUserId()));
             model.addAttribute("activeTab", "#nav-files");
         } catch (Exception e) {
             logger.info("User session error: " + e.getMessage());
