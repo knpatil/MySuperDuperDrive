@@ -16,6 +16,9 @@ public class LoginPage {
     @FindBy(id = "login")
     private WebElement submitButton;
 
+    @FindBy(id = "logout")
+    private WebElement logoutButton;
+
     public LoginPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
@@ -24,5 +27,10 @@ public class LoginPage {
         this.usernameField.sendKeys(username);
         this.passwordField.sendKeys(password);
         this.submitButton.click();
+    }
+
+    public void logout() throws InterruptedException {
+        Thread.sleep(1000);
+        logoutButton.click();
     }
 }

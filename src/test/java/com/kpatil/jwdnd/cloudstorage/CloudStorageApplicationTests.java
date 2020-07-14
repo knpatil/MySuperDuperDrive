@@ -6,7 +6,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -70,7 +69,7 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void testUserSignUpLoginAndLogout() {
+    public void testUserSignUpLoginAndLogout() throws InterruptedException {
         WebDriverWait wait = new WebDriverWait(driver, 30);
 
         // sign up user
@@ -83,18 +82,16 @@ class CloudStorageApplicationTests {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login(USERNAME, PASSWORD);
 
+        // assertions
         Assertions.assertEquals("Home", driver.getTitle());
-
         WebElement welcomeTextField = driver.findElement(By.id("welcomeText"));
         assertThat(welcomeTextField.getText()).isEqualTo("Welcome " + FIRST_NAME);
 
         // logout
-        WebElement logoutButton = driver.findElement(By.id("logout"));
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("logout")));
-        logoutButton.click();
+        loginPage.logout();
 
         // wait for logout
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("login")));
+        Thread.sleep(500);
         assertThat(driver.getTitle()).isEqualTo("Login");
 
         // try accessing home page after logout
@@ -102,6 +99,35 @@ class CloudStorageApplicationTests {
         assertThat(driver.getTitle()).isEqualTo("Login"); // redirect to login page
     }
 
+    @Test
+    public void testNoteCreateEditDelete() throws InterruptedException {
+        // sign up user
+        driver.get(getSignUpUrl());
+        SignUpPage singUpPage = new SignUpPage(driver);
+        singUpPage.signUp(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD);
+
+        // login user
+        driver.get(getLoginUrl());
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login(USERNAME, PASSWORD);
+
+        // go to notes tab
+        NotePage notePage = new NotePage(driver);
+        notePage.goToNotesTab();
+
+        // create a new note
+        notePage.addNewNote("Test Note", "Test Description");
+
+        // assert data
+        Thread.sleep(1000);
+        WebElement noteTitle = driver.findElement(By.id("note1"));
+        assertThat(noteTitle.getText()).isEqualTo("Test Note");
+
+
+        // Thread.sleep(10000);
+        notePage.logout();
+        Thread.sleep(500);
+    }
 
     private String getHomePageUrl() {
         return SERVER + this.port + "/home";
