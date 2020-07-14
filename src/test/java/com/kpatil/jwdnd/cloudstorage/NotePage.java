@@ -1,6 +1,5 @@
 package com.kpatil.jwdnd.cloudstorage;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -37,16 +36,38 @@ public class NotePage {
 
     public void addNewNote(String testNote, String testDescription) throws InterruptedException {
         Thread.sleep(1000);
-        // WebElement addNewNote = driver.findElement(By.id("addNewNote"));
         addNewNote.click();
         Thread.sleep(1000);
         noteTitle.sendKeys(testNote);
         noteDescription.sendKeys(testDescription);
         saveChangesButton.click();
+        Thread.sleep(500);
     }
 
     public void logout() throws InterruptedException {
         Thread.sleep(1000);
         logoutButton.click();
+        Thread.sleep(500);
+    }
+
+    public void editNote(WebElement noteToEdit, String testNote, String testDescription) throws InterruptedException {
+        Thread.sleep(500);
+        noteToEdit.click();
+        Thread.sleep(500);
+
+        noteTitle.clear();
+        noteTitle.sendKeys(testNote);
+
+        noteDescription.clear();
+        noteDescription.sendKeys(testDescription);
+
+        saveChangesButton.click();
+        Thread.sleep(500);
+    }
+
+    public void deleteNote(WebElement noteToDelete) throws InterruptedException {
+        Thread.sleep(500);
+        noteToDelete.click();
+        Thread.sleep(500);
     }
 }

@@ -32,5 +32,6 @@ public class LoginPage {
     public void logout() throws InterruptedException {
         Thread.sleep(1000);
         logoutButton.click();
+        Thread.sleep(500);
     }
 }
