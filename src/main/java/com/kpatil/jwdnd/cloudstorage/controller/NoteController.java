@@ -39,7 +39,8 @@ public class NoteController {
         logger.info("Received request to create or update note ...");
         User user = this.userService.getUser(auth.getName());
         if (note.getNoteId() > 0) {
-            this.noteService.updateNote(note);
+            Integer rc = this.noteService.updateNote(note, user.getUserId());
+            logger.info("Return code is " + rc);
         } else {
             Note newNote = this.noteService.addNote(note, user.getUserId());
             logger.info("Note created with id = " + newNote.getNoteId());
@@ -52,11 +53,10 @@ public class NoteController {
     public String deleteNote(@PathVariable("noteId") Integer noteId, Authentication auth, Model model) {
         logger.info("Received request to delete note with ID = " + noteId);
         User user = this.userService.getUser(auth.getName());
-        try {
-            this.noteService.deleteNote(noteId);
-        } catch (Exception e) {
-            logger.info("Exception occurred while deleting note " + e.getMessage());
-            model.addAttribute("message", e.getMessage());
+        Integer returnCode = this.noteService.deleteNote(noteId, user.getUserId());
+        if (returnCode == 0) {
+            logger.warn("Unauthorized user trying to delete this resource!");
+            model.addAttribute("message", "Unauthorized operation!");
         }
         addModelAttributes(model, user);
         return "home";

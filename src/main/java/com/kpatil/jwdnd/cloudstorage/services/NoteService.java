@@ -18,17 +18,18 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public void updateNote(Note note) {
-        logger.info("Updating note for id " + note.getNoteId());
-        int noteId = this.noteMapper.updateNote(note);
-        logger.info("Note updated for id " + noteId);
+    public Integer updateNote(Note note, Integer userId) {
+        logger.info("Updating note with id " + note.getNoteId() + " for user " + userId);
+        int returnCode = this.noteMapper.updateNote(note, userId);
+        logger.info("Update return code: " + returnCode);
+        return returnCode;
     }
 
     public Note addNote(Note note, Integer userId) {
         logger.info("Adding new note ...");
         note.setUserId(userId);
-        this.noteMapper.save(note);
-        logger.info("note added.");
+        Integer returnCode = this.noteMapper.save(note);
+        logger.info("note added with return code : " + returnCode);
         return note;
     }
 
@@ -37,8 +38,8 @@ public class NoteService {
         return this.noteMapper.findAllByUserId(userId);
     }
 
-    public void deleteNote(Integer noteId) {
-        logger.info("Deleting note " + noteId);
-        this.noteMapper.deleteByNoteId(noteId);
+    public Integer deleteNote(Integer noteId, Integer userId) {
+        logger.info("Deleting note with id " + noteId + " for user " + userId);
+        return this.noteMapper.deleteByNoteId(noteId, userId);
     }
 }
