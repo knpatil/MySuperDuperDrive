@@ -62,4 +62,8 @@ public class CredentialService {
         credential.setPassword(encryptionService.decryptValue(credential.getPassword(), credential.getKey()));
         return credential;
     }
+
+    public Credential getCredentialById(int credentialId) {
+        return credentialMapper.findByCredentialId(credentialId);
+    }
 }

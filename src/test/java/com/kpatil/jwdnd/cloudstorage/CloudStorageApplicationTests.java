@@ -1,5 +1,8 @@
 package com.kpatil.jwdnd.cloudstorage;
 
+import com.kpatil.jwdnd.cloudstorage.model.Credential;
+import com.kpatil.jwdnd.cloudstorage.services.CredentialService;
+import com.kpatil.jwdnd.cloudstorage.services.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -8,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -24,6 +28,12 @@ class CloudStorageApplicationTests {
     private static final String LAST_NAME = "Last Name";
     private static final String LOGIN_URL = "/login";
     private static final String SIGN_UP_URL = "/signup";
+
+    @Autowired
+    private CredentialService credentialService;
+
+    @Autowired
+    private EncryptionService encryptionService;
 
     @LocalServerPort
     private int port;
@@ -180,6 +190,11 @@ class CloudStorageApplicationTests {
         WebElement url = driver.findElement(By.id("credentialUrl2"));
         assertThat(url.getText()).isEqualTo("Edited URL2");
 
+        // verify that the password is encrypted
+        Credential credential = credentialService.getCredentialById(2);
+        System.out.println("KEY=" + credential.getKey() + ", PASSWORD=" + credential.getPassword());
+        assertThat(encryptionService.decryptValue(credential.getPassword(), credential.getKey())).isEqualTo("EditedPassword2");
+
         // delete third note
         WebElement credentialToDelete = driver.findElement(By.id("deleteCredential3"));
         credentialPage.deleteCredential(credentialToDelete);
@@ -193,7 +208,7 @@ class CloudStorageApplicationTests {
             url = driver.findElement(By.id("credentialUrl" + id));
             assertThat(url.getText()).contains("URL" + id);
         }
-        
+
         // logout
         credentialPage.logout();
     }

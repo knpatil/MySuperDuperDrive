@@ -16,7 +16,7 @@ public interface CredentialMapper {
     List<Credential> findAllByUserId(Integer userId);
 
     @Select("SELECT * FROM credentials WHERE credentialid = #{credentialId}")
-    List<Credential> findByCredentialId(Integer credentialId);
+    Credential findByCredentialId(Integer credentialId);
 
     @Delete("DELETE FROM credentials WHERE credentialid = ${credentialId}")
     void deleteByCredentialId(int credentialId);
