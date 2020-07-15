@@ -18,10 +18,10 @@ public interface CredentialMapper {
     @Select("SELECT * FROM credentials WHERE credentialid = #{credentialId}")
     Credential findByCredentialId(Integer credentialId);
 
-    @Delete("DELETE FROM credentials WHERE credentialid = ${credentialId}")
-    void deleteByCredentialId(int credentialId);
+    @Delete("DELETE FROM credentials WHERE credentialid = ${credentialId} AND userId = #{userId}")
+    Integer deleteByCredentialId(int credentialId, Integer userId);
 
-    @Update("UPDATE credentials SET url = #{url}, username = #{username}, key = #{key}, password = #{password} WHERE credentialid = #{credentialId}")
-    int updateCredential(Credential credential);
+    @Update("UPDATE credentials SET url = #{credential.url}, username = #{credential.username}, key = #{credential.key}, password = #{credential.password} WHERE credentialid = #{credential.credentialId} AND userId = #{userId}")
+    Integer updateCredential(Credential credential, Integer userId);
 
 }

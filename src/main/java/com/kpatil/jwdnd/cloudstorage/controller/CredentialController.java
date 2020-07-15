@@ -39,7 +39,8 @@ public class CredentialController {
         logger.info("Received request to create or update credential ...");
         User user = this.userService.getUser(auth.getName());
         if (credential.getCredentialId() > 0) {
-            this.credentialService.updateCredential(credential);
+            Integer rc = this.credentialService.updateCredential(credential, user.getUserId());
+            logger.info("Return code for update => " + rc);
         } else {
             Credential newCredential = this.credentialService.addCredential(credential, user.getUserId());
             logger.info("Credential created with id = " + newCredential.getCredentialId());
@@ -52,11 +53,10 @@ public class CredentialController {
     public String deleteCredential(@PathVariable("credentialId") Integer credentialId, Authentication auth, Model model) {
         logger.info("Received request to delete credential with ID = " + credentialId);
         User user = this.userService.getUser(auth.getName());
-        try {
-            this.credentialService.deleteCredential(credentialId);
-        } catch (Exception e) {
-            logger.info("Exception occurred while deleting credential " + e.getMessage());
-            model.addAttribute("message", e.getMessage());
+        Integer returnCode = this.credentialService.deleteCredential(credentialId, user.getUserId());
+        if (returnCode == 0) {
+            logger.warn("Unauthorized user trying to delete this resource!");
+            model.addAttribute("message", "Unauthorized operation!");
         }
         addModelAttributes(model, user);
         return "home";

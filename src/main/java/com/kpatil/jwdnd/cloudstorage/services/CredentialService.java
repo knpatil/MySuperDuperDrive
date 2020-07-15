@@ -21,11 +21,12 @@ public class CredentialService {
         this.encryptionService = encryptionService;
     }
 
-    public void updateCredential(Credential credential) {
+    public Integer updateCredential(Credential credential, Integer userId) {
         logger.info("Updating credential for id " + credential.getCredentialId());
         encryptPassword(credential);
-        int credentialId = this.credentialMapper.updateCredential(credential);
-        logger.info("Credential updated for id " + credentialId);
+        Integer returnCode = this.credentialMapper.updateCredential(credential, userId);
+        logger.info("Credential updated with return code : " + returnCode);
+        return returnCode;
     }
 
     public Credential addCredential(Credential credential, Integer userId) {
@@ -44,9 +45,9 @@ public class CredentialService {
         return credentials.stream().map(this::decryptPassword).collect(Collectors.toList());
     }
 
-    public void deleteCredential(Integer credentialId) {
+    public Integer deleteCredential(Integer credentialId, Integer userId) {
         logger.info("Deleting credential " + credentialId);
-        this.credentialMapper.deleteByCredentialId(credentialId);
+        return this.credentialMapper.deleteByCredentialId(credentialId, userId);
     }
 
     private void encryptPassword(Credential credential) {
