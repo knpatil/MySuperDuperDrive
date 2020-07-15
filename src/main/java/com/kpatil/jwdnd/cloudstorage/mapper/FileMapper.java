@@ -15,9 +15,9 @@ public interface FileMapper {
     @Select("SELECT * FROM files WHERE userid = #{userId}")
     List<FileDAO> findFilesByUserId(Integer userId);
 
-    @Select("SELECT * FROM files WHERE fileId = #{fileId}")
-    FileDAO findByFileId(Integer fileId);
+    @Select("SELECT * FROM files WHERE fileId = #{fileId} AND userId = #{userId}")
+    FileDAO findByFileId(Integer fileId, Integer userId);
 
-    @Delete("DELETE FROM files WHERE fileId = #{fileId}")
-    void deleteByFileId(Integer fileId);
+    @Delete("DELETE FROM files WHERE fileId = #{fileId} AND userId = #{userId}")
+    Integer deleteByFileId(Integer fileId, Integer userId);
 }

@@ -40,13 +40,13 @@ public class FileService {
         return this.fileMapper.findFilesByUserId(userId);
     }
 
-    public FileDAO getFileById(Integer fileId) {
-        logger.info("Fetching file with id " + fileId);
-        return this.fileMapper.findByFileId(fileId);
+    public FileDAO getFileById(Integer fileId, Integer userId) {
+        logger.info("Fetching file with id " + fileId + " for user " + userId);
+        return this.fileMapper.findByFileId(fileId, userId);
     }
 
-    public void deleteFile(Integer fileId) {
-        logger.info("Deleting file with id " + fileId);
-        this.fileMapper.deleteByFileId(fileId);
+    public Integer deleteFile(Integer fileId, Integer userId) {
+        logger.info("Deleting file with id " + fileId + " for userId " + userId);
+        return this.fileMapper.deleteByFileId(fileId, userId);
     }
 }

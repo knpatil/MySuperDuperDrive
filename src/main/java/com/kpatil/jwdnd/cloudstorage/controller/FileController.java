@@ -56,26 +56,30 @@ public class FileController {
     }
 
     @GetMapping("/view/{fileId}")
-    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Integer fileId) {
+    public ResponseEntity<?> downloadFile(@PathVariable("fileId") Integer fileId, Authentication auth) {
         logger.info("Received request to download file with id = " + fileId);
-        FileDAO fileDAO = this.fileService.getFileById(fileId);
-        String contentType = fileDAO.getContentType();
-        String fileName = fileDAO.getFilename();
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"" + fileName + "\"")
-                .body(fileDAO.getFileData());
+        User user = userService.getUser(auth.getName());
+        logger.info("User is " + user.getUsername());
+        FileDAO fileDAO = this.fileService.getFileById(fileId, user.getUserId());
+        if (null != fileDAO) {
+            String contentType = fileDAO.getContentType();
+            String fileName = fileDAO.getFilename();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\"" + fileName + "\"")
+                    .body(fileDAO.getFileData());
+        } else {
+            return ResponseEntity.badRequest().body("Unauthorized access!");
+        }
     }
 
     @GetMapping("/delete/{fileId}")
     public String deleteFile(@PathVariable("fileId") Integer fileId, Authentication auth, Model model) {
         User user = userService.getUser(auth.getName());
         logger.info("Received request to delete file with id = " + fileId);
-        try {
-            this.fileService.deleteFile(fileId);
-        } catch (Exception e) {
-            logger.warn("Error occurred while deleting file: " + Arrays.toString(e.getStackTrace()));
-            model.addAttribute("message", e.getMessage());
+        Integer returnCode = this.fileService.deleteFile(fileId, user.getUserId());
+        if (returnCode == 0) {
+            model.addAttribute("message", "Unauthorized access or file not found!");
         }
         addModelAttributes(model, user);
         return "home";
