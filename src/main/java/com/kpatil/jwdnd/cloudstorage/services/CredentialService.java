@@ -29,13 +29,18 @@ public class CredentialService {
         return returnCode;
     }
 
-    public Credential addCredential(Credential credential, Integer userId) {
+    public int addCredential(Credential credential, Integer userId) {
         logger.info("Adding new credential ...");
         credential.setUserId(userId);
         encryptPassword(credential);
-        this.credentialMapper.save(credential);
-        logger.info("credential added.");
-        return credential;
+        try {
+            int returnCode = this.credentialMapper.save(credential);
+            logger.info("credential added with return code : " + returnCode);
+            return returnCode; // success
+        } catch (Exception e) {
+            logger.warn("Failed to save credential : " + e.getMessage());
+            return 0;
+        }
     }
 
     public List<Credential> getAllCredentials(Integer userId) {

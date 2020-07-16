@@ -41,9 +41,18 @@ public class CredentialController {
         if (credential.getCredentialId() > 0) {
             Integer rc = this.credentialService.updateCredential(credential, user.getUserId());
             logger.info("Return code for update => " + rc);
+            if (rc == 0) {
+                model.addAttribute("message", "Error in updating a credential!");
+            } else {
+                model.addAttribute("successMessage", "Credential updated successfully.");
+            }
         } else {
-            Credential newCredential = this.credentialService.addCredential(credential, user.getUserId());
-            logger.info("Credential created with id = " + newCredential.getCredentialId());
+            int returnCode = this.credentialService.addCredential(credential, user.getUserId());
+            if (returnCode == 0) {
+                model.addAttribute("message", "Duplicate URL or error in adding new credential!");
+            } else {
+                model.addAttribute("successMessage", "Credential added successfully.");
+            }
         }
         addModelAttributes(model, user);
         return "/home";
@@ -57,6 +66,8 @@ public class CredentialController {
         if (returnCode == 0) {
             logger.warn("Unauthorized user trying to delete this resource!");
             model.addAttribute("message", "Unauthorized operation!");
+        } else {
+            model.addAttribute("successMessage", "Credential deleted!");
         }
         addModelAttributes(model, user);
         return "home";

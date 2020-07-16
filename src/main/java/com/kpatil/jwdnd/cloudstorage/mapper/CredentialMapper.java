@@ -8,9 +8,9 @@ import java.util.List;
 @Mapper
 public interface CredentialMapper {
 
-    @Select("INSERT INTO credentials (url, username, key, password, userid) VALUES (#{url}, #{username}, #{key}, #{password}, #{userId})")
+    @Insert("INSERT INTO credentials (url, username, key, password, userid) VALUES (#{url}, #{username}, #{key}, #{password}, #{userId})")
     @Options(useGeneratedKeys = true, keyProperty = "credentialId")
-    Integer save(Credential credential);
+    int save(Credential credential);
 
     @Select("SELECT * FROM credentials WHERE userid = #{userId}")
     List<Credential> findAllByUserId(Integer userId);

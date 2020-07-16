@@ -24,7 +24,7 @@
                 </div>
 
                 <div th:if="${signupError}" class="alert alert-danger">
-                    <span>Error in Signup</span>
+                    <span th:text="${signupError}">Error in Signup</span>
                 </div>
 
                 <div class="form-row">

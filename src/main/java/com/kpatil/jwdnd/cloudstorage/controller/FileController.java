@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Controller
@@ -46,8 +45,14 @@ public class FileController {
         User user = this.userService.getUser(auth.getName());
         logger.info("This user is " + user.getUsername());
         if (file.getOriginalFilename() != null && !Objects.equals(file.getOriginalFilename(), "")) {
-            FileDAO fileDAO = this.fileService.uploadFile(file, user.getUserId());
-            logger.info("File uploaded successfully with ID = " + fileDAO.getFileId());
+            int returnCode = this.fileService.uploadFile(file, user.getUserId());
+            if (returnCode == 0) {
+                logger.info("File upload failed.");
+                model.addAttribute("message", "Duplicate file!");
+            } else {
+                logger.info("File uploaded successfully.");
+                model.addAttribute("successMessage", "File uploaded successfully.");
+            }
         } else {
             model.addAttribute("message", "No file selected to upload!");
         }
@@ -80,6 +85,8 @@ public class FileController {
         Integer returnCode = this.fileService.deleteFile(fileId, user.getUserId());
         if (returnCode == 0) {
             model.addAttribute("message", "Unauthorized access or file not found!");
+        } else {
+            model.addAttribute("successMessage", "File deleted successfully.");
         }
         addModelAttributes(model, user);
         return "home";

@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/signup", "/css/**", "/js/**").permitAll()
+                .antMatchers("/h2/**").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
@@ -41,5 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
+
+         // temporary verification of h2 database
+         http.csrf().disable();
+         http.headers().frameOptions().disable();
     }
 }

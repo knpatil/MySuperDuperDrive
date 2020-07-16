@@ -41,9 +41,18 @@ public class NoteController {
         if (note.getNoteId() > 0) {
             Integer rc = this.noteService.updateNote(note, user.getUserId());
             logger.info("Return code is " + rc);
+            if (rc == 0) {
+                model.addAttribute("message", "Error in updating a note!");
+            } else {
+                model.addAttribute("successMessage", "Note updated successfully.");
+            }
         } else {
-            Note newNote = this.noteService.addNote(note, user.getUserId());
-            logger.info("Note created with id = " + newNote.getNoteId());
+            int returnCode = this.noteService.addNote(note, user.getUserId());
+            if (returnCode == 0) {
+                model.addAttribute("message", "Error in adding new note!");
+            } else {
+                model.addAttribute("successMessage", "Note added successfully.");
+            }
         }
         addModelAttributes(model, user);
         return "/home";
@@ -57,6 +66,8 @@ public class NoteController {
         if (returnCode == 0) {
             logger.warn("Unauthorized user trying to delete this resource!");
             model.addAttribute("message", "Unauthorized operation!");
+        } else {
+            model.addAttribute("successMessage", "Note deleted!");
         }
         addModelAttributes(model, user);
         return "home";

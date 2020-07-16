@@ -31,6 +31,10 @@
 
                 <h4 id="errorMessage" th:text="${message}" style="color: #eb344f"></h4>
 
+                <div id="successMessage">
+                    <h4 th:text="${successMessage}" style="color: #3474eb"></h4>
+                </div>
+
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
 
@@ -239,6 +243,11 @@
                 console.log( "I am ready now!" );
                 var activeTab = $('#activeTab').val();
                 $('.nav-tabs a[href="' + activeTab + '"]').tab('show')
+
+                setTimeout(function() {
+                    console.log("time out function running");
+                    $('#successMessage').remove();
+                }, 5000);
             });
         </script>
     </body>

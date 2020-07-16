@@ -21,7 +21,7 @@ public class FileService {
         this.fileMapper = fileMapper;
     }
 
-    public FileDAO uploadFile(MultipartFile file, Integer userId) throws IOException {
+    public int uploadFile(MultipartFile file, Integer userId) throws IOException {
         logger.info("Uploading file " + file.getOriginalFilename());
         FileDAO newFileDAO = new FileDAO(
                 file.getOriginalFilename(),
@@ -30,9 +30,14 @@ public class FileService {
                 userId,
                 file.getBytes()
         );
-        this.fileMapper.save(newFileDAO);
-        logger.info("Uploaded");
-        return newFileDAO;
+        try {
+            this.fileMapper.save(newFileDAO);
+            logger.info("Uploaded");
+            return 1;
+        } catch (Exception e) {
+            logger.info("File save failed: " + e.getMessage());
+            return 0;
+        }
     }
 
     public List<FileDAO> getAllFiles(Integer userId) {

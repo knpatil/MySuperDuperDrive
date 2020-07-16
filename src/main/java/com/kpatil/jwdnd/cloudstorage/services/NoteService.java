@@ -25,12 +25,13 @@ public class NoteService {
         return returnCode;
     }
 
-    public Note addNote(Note note, Integer userId) {
+    public int addNote(Note note, Integer userId) {
         logger.info("Adding new note ...");
         note.setUserId(userId);
-        Integer returnCode = this.noteMapper.save(note);
+        int returnCode = this.noteMapper.save(note);
         logger.info("note added with return code : " + returnCode);
-        return note;
+        logger.info("note id is " + note.getNoteId());
+        return returnCode;
     }
 
     public List<Note> getAllNotes(Integer userId) {
