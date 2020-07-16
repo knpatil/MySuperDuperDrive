@@ -7,6 +7,7 @@ public class Credential {
     private String key;
     private String password;
     private Integer userId;
+    private String textPwd;
 
     public Credential(Integer credentialId, String url, String username, String key, String password, Integer userId) {
         this.credentialId = credentialId;
@@ -64,4 +65,13 @@ public class Credential {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
+    public String getTextPwd() {
+        return textPwd;
+    }
+
+    public void setTextPwd(String textPwd) {
+        this.textPwd = textPwd;
+    }
+
 }
